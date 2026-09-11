@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#092f5b">
+  <title>KANNUSAMY Agency | Operations Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-noise" aria-hidden="true"></div>
+  <section class="login-view" id="loginView">
+    <div class="login-visual">
+      <div class="brand-lockup">
+        <div class="brand-mark"><span>iocl</span></div>
+        <div><strong>KANNUSAMY</strong><small>AGENCY / KALLAKURICHI</small></div>
+      </div>
+      <div class="visual-copy">
+        <span class="eyebrow">INDIANOIL OPERATIONS</span>
+        <h1>Every litre,<br><em>accounted for.</em></h1>
+        <p>A clearer way to run your station, move fuel, and keep every team aligned.</p>
+      </div>
+      <div class="visual-footer"><span>TN 32 · EST. 2008</span><span>v2.4.0</span></div>
+    </div>
+    <div class="login-panel">
+      <div class="mobile-brand"><div class="brand-mark"><span>iocl</span></div><strong>KANNUSAMY AGENCY</strong></div>
+      <div class="login-heading"><span class="eyebrow">SECURE WORKSPACE</span><h2>Welcome back<span>.</span></h2><p>Sign in to continue to the agency portal.</p></div>
+      <form id="loginForm" class="login-form">
+        <label for="roleSelect">Login as<select id="roleSelect"></select></label>
+        <label for="userId">User ID<input id="userId" name="userId" value="admin" autocomplete="username"></label>
+        <label for="password">Password<div class="password-wrap"><input id="password" name="password" value="1234" type="password" autocomplete="current-password"><button type="button" class="eye-button" id="togglePassword" aria-label="Show password">Show</button></div></label>
+        <button class="primary-button login-button" type="submit">Enter workspace <span>↗</span></button>
+      </form>
+      <div class="demo-note"><span class="status-dot"></span><span id="demoNote">Demo access: admin / 1234</span></div>
+    </div>
+  </section>
+
+  <section class="portal-view hidden" id="portalView">
+    <header class="topbar">
+      <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+      <a class="portal-brand" href="#dashboard" data-page="dashboard"><div class="brand-mark"><span>iocl</span></div><div><strong>KANNUSAMY AGENCY</strong><small>INDIANOIL OPERATIONS PORTAL</small></div></a>
+      <div class="topbar-actions"><button class="notification-button" id="notificationButton" aria-label="Notifications">♢<i></i></button><button class="profile-button" id="profileButton"><span class="avatar" id="profileAvatar">SA</span><span><strong id="profileName">Super Admin</strong><small id="profileRole">Full access</small></span><b>⌄</b></button></div>
+    </header>
+    <div class="app-layout">
+      <aside class="sidebar" id="sidebar"><div class="sidebar-label">WORKSPACE</div><nav id="mainNav"></nav><div class="sidebar-bottom"><div class="sync-status"><span class="status-dot"></span><div><strong>Systems live</strong><small>Last sync 2 min ago</small></div></div><button class="logout-button" id="logoutButton">↪ <span>Sign out</span></button></div></aside>
+      <main class="main-content" id="mainContent"></main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+  </section>
+
+  <div class="modal-backdrop hidden" id="entryModal"><div class="modal"><button class="modal-close" data-close-modal aria-label="Close">×</button><span class="eyebrow">QUICK ACTION</span><h2>New fuel entry</h2><p>Record a fresh movement against today's station shift.</p><form id="entryForm" class="entry-form"><label>Fuel type<select><option>Diesel</option><option>Petrol</option><option>XP95</option></select></label><label>Quantity (litres)<input type="number" value="240"></label><label>Vehicle / customer<input placeholder="e.g. TN15 AB 4582"></label><label>Amount (₹)<input type="number" value="24000"></label><button class="primary-button" type="submit">Save fuel entry <span>↗</span></button></form></div></div>
+  <script src="app.js"></script>
+</body>
+</html>
