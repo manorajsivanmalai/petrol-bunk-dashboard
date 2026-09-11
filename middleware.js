@@ -3,7 +3,7 @@ import { COOKIE_NAME, verifySessionToken } from './lib/auth';
 import { canAccessPage } from './lib/rbac';
 
 const PUBLIC_PATHS = ['/login'];
-const DASHBOARD_PAGES = ['dashboard', 'fuel', 'approvals', 'customers', 'reports', 'access'];
+const DASHBOARD_PAGES = ['dashboard', 'fuel', 'approvals', 'customers', 'reports', 'access', 'audit'];
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;

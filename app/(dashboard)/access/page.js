@@ -4,6 +4,7 @@ import { ROLES, roleLabels, roleSubtitles, navForRole } from '@/lib/rbac';
 import { PageHeading, Panel, Tag } from '@/components/ui';
 import InviteUserButton from '@/components/InviteUserButton';
 import UserRoleControls from '@/components/UserRoleControls';
+import ResetPasswordButton from '@/components/ResetPasswordButton';
 import { timeAgo } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
@@ -30,7 +31,10 @@ export default async function AccessPage() {
         ))}
       </section>
       <Panel title="Active team" aside={`${users.length} members`}>
-        <InviteUserButton />
+        <div className="team-actions">
+          <InviteUserButton />
+          <a className="secondary" href="/audit">View audit log <span>↗</span></a>
+        </div>
         <table>
           <thead>
             <tr>
@@ -45,13 +49,22 @@ export default async function AccessPage() {
               <tr key={user.id}>
                 <td className="member-cell">
                   <strong>{user.name}</strong>
-                  <small>{user.username}{user.id === session.sub ? ' · You' : ''}</small>
+                  <small>
+                    {user.username}
+                    {user.email ? ` · ${user.email}` : ''}
+                    {user.id === session.sub ? ' · You' : ''}
+                  </small>
                 </td>
                 <td>{roleLabels[user.role]}</td>
                 <td>{user.lastActiveAt ? timeAgo(user.lastActiveAt) : 'Never signed in'}</td>
                 <td>
                   {user.active ? <Tag>Active</Tag> : <Tag tone="muted">Inactive</Tag>}
                   <UserRoleControls user={user} isSelf={user.id === session.sub} />
+                  {user.id !== session.sub && (
+                    <div className="field-row">
+                      <ResetPasswordButton user={user} />
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

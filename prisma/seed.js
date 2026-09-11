@@ -9,23 +9,51 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { username: 'admin' },
-    update: {},
-    create: { name: 'Arun Kumar', username: 'admin', role: 'SUPER_ADMIN', passwordHash, phone: '9443218012' },
+    update: { email: 'admin@kannusamyagency.com' },
+    create: {
+      name: 'Arun Kumar',
+      username: 'admin',
+      email: 'admin@kannusamyagency.com',
+      role: 'SUPER_ADMIN',
+      passwordHash,
+      phone: '9443218012',
+    },
   });
   const manager = await prisma.user.upsert({
     where: { username: 'manager' },
-    update: {},
-    create: { name: 'Meena S.', username: 'manager', role: 'MANAGER', passwordHash, phone: '9842177102' },
+    update: { email: 'manager@kannusamyagency.com' },
+    create: {
+      name: 'Meena S.',
+      username: 'manager',
+      email: 'manager@kannusamyagency.com',
+      role: 'MANAGER',
+      passwordHash,
+      phone: '9842177102',
+    },
   });
   const attendant = await prisma.user.upsert({
     where: { username: 'attendant' },
-    update: {},
-    create: { name: 'Karthik R.', username: 'attendant', role: 'ATTENDANT', passwordHash, phone: '9600011223' },
+    update: { email: 'attendant@kannusamyagency.com' },
+    create: {
+      name: 'Karthik R.',
+      username: 'attendant',
+      email: 'attendant@kannusamyagency.com',
+      role: 'ATTENDANT',
+      passwordHash,
+      phone: '9600011223',
+    },
   });
   const accountant = await prisma.user.upsert({
     where: { username: 'accountant' },
-    update: {},
-    create: { name: 'Priya V.', username: 'accountant', role: 'ACCOUNTANT', passwordHash, phone: '9600044556' },
+    update: { email: 'accountant@kannusamyagency.com' },
+    create: {
+      name: 'Priya V.',
+      username: 'accountant',
+      email: 'accountant@kannusamyagency.com',
+      role: 'ACCOUNTANT',
+      passwordHash,
+      phone: '9600044556',
+    },
   });
 
   const pump1 = await prisma.pump.upsert({ where: { name: 'Pump 01' }, update: {}, create: { name: 'Pump 01' } });
@@ -144,8 +172,11 @@ async function main() {
     ],
   });
 
-  console.log('Seed complete. Demo accounts (all use password "Agency@123"):');
-  console.log('  admin / manager / attendant / accountant');
+  console.log('Seed complete. Demo accounts (log in with username or email, all use password "Agency@123"):');
+  console.log('  admin (admin@kannusamyagency.com)');
+  console.log('  manager (manager@kannusamyagency.com)');
+  console.log('  attendant (attendant@kannusamyagency.com)');
+  console.log('  accountant (accountant@kannusamyagency.com)');
   console.log('IMPORTANT: change these passwords before going live.');
 }
 

@@ -30,4 +30,7 @@
 .temp-password-group{display:grid;gap:8px;margin:14px 0 4px}
 .member-cell small{display:block;color:var(--muted);font-size:11px;margin-top:2px;font-weight:500}
 td .field-row{margin:8px 0 0}
+.audit-search{min-width:260px;flex:1}
+.team-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+@media(max-width:650px){.audit-search{min-width:0;width:100%}}
 .panel-head .field-row{margin:0}

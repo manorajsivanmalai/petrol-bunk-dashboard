@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { createSessionToken, COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from '@/lib/auth';
 
 const schema = z.object({
-  username: z.string().min(1),
+  identifier: z.string().min(1),
   password: z.string().min(1),
 });
 
@@ -13,14 +13,14 @@ export async function POST(request) {
   const body = await request.json().catch(() => null);
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Enter a username and password.' }, { status: 400 });
+    return NextResponse.json({ error: 'Enter your username or email and password.' }, { status: 400 });
   }
 
-  const { username, password } = parsed.data;
-  const user = await prisma.user.findUnique({ where: { username } });
+  const { identifier, password } = parsed.data;
+  const user = await prisma.user.findFirst({ where: { OR: [{ username: identifier }, { email: identifier }] } });
 
   if (!user || !user.active || !(await bcrypt.compare(password, user.passwordHash))) {
-    return NextResponse.json({ error: 'Check the demo credentials for this role.' }, { status: 401 });
+    return NextResponse.json({ error: 'Check your username/email and password.' }, { status: 401 });
   }
 
   const token = await createSessionToken(user);
