@@ -3,16 +3,13 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireAction, requireSession } from '@/lib/api-guard';
 import { listFuelEntries } from '@/lib/queries/fuel-entries';
-
-const CREDIT_OR_LARGE_THRESHOLD = 20000;
+import { normalizeVehicleNumber } from '@/lib/vehicle';
 
 const schema = z.object({
   fuelType: z.enum(['PETROL', 'DIESEL', 'XP95']),
   quantityL: z.coerce.number().positive(),
   amount: z.coerce.number().positive(),
-  vehicleNumber: z.string().trim().max(20).optional().or(z.literal('')),
-  customerId: z.string().optional().or(z.literal('')),
-  paymentMode: z.enum(['CASH', 'CREDIT', 'UPI']).default('CASH'),
+  vehicleNumber: z.string().trim().min(1, 'Select a registered customer vehicle.').transform(normalizeVehicleNumber),
 });
 
 async function getOrCreateActiveShift(userId) {
@@ -46,12 +43,16 @@ export async function POST(request) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message || 'Invalid entry.' }, { status: 400 });
   }
   const data = parsed.data;
-  const customerId = data.customerId || null;
-  const vehicleNumber = data.vehicleNumber || null;
+  const vehicleNumber = data.vehicleNumber;
 
-  if (data.paymentMode === 'CREDIT' && !customerId) {
-    return NextResponse.json({ error: 'Select a customer for a credit sale.' }, { status: 400 });
+  const vehicle = await prisma.vehicle.findUnique({ where: { vehicleNumber } });
+  if (!vehicle) {
+    return NextResponse.json(
+      { error: `No customer is registered to ${vehicleNumber}. Add them under Customers first.` },
+      { status: 400 }
+    );
   }
+  const customerId = vehicle.customerId;
 
   const shift = await getOrCreateActiveShift(session.sub);
   const ratePerL = data.amount / data.quantityL;
@@ -65,7 +66,7 @@ export async function POST(request) {
       amount: data.amount,
       vehicleNumber,
       customerId,
-      paymentMode: data.paymentMode,
+      paymentMode: 'CREDIT',
       createdById: session.sub,
       status: 'Pending',
     },
@@ -76,44 +77,37 @@ export async function POST(request) {
     data: { volumeL: { increment: data.quantityL }, collectionAmount: { increment: data.amount } },
   });
 
-  if (data.paymentMode === 'CREDIT' && customerId) {
-    await prisma.creditTransaction.create({
-      data: {
-        customerId,
-        fuelEntryId: entry.id,
-        amount: data.amount,
-        type: 'DEBIT',
-        note: `${data.fuelType} · ${vehicleNumber || 'Credit sale'}`,
-      },
-    });
-    await prisma.customer.update({ where: { id: customerId }, data: { outstandingAmount: { increment: data.amount } } });
-  }
+  await prisma.creditTransaction.create({
+    data: {
+      customerId,
+      fuelEntryId: entry.id,
+      amount: data.amount,
+      type: 'DEBIT',
+      note: `${data.fuelType} · ${vehicleNumber}`,
+    },
+  });
+  await prisma.customer.update({ where: { id: customerId }, data: { outstandingAmount: { increment: data.amount } } });
 
-  const needsApproval = data.paymentMode === 'CREDIT' || data.amount >= CREDIT_OR_LARGE_THRESHOLD;
-  if (needsApproval) {
-    await prisma.approval.create({
-      data: {
-        type: data.paymentMode === 'CREDIT' ? 'CREDIT_SALE' : 'FUEL_ISSUE',
-        fuelEntryId: entry.id,
-        title: `Fuel issue · ${vehicleNumber || data.fuelType}`,
-        detail: `${data.fuelType} / ${data.quantityL} L`,
-        amount: data.amount,
-        requestedById: session.sub,
-      },
-    });
-  } else {
-    await prisma.fuelEntry.update({ where: { id: entry.id }, data: { status: 'Approved' } });
-  }
+  await prisma.approval.create({
+    data: {
+      type: 'CREDIT_SALE',
+      fuelEntryId: entry.id,
+      title: `Fuel issue · ${vehicleNumber}`,
+      detail: `${data.fuelType} / ${data.quantityL} L`,
+      amount: data.amount,
+      requestedById: session.sub,
+    },
+  });
 
   await prisma.activityLog.create({
     data: {
       actorId: session.sub,
       icon: '⛽',
-      title: `${data.fuelType.charAt(0)}${data.fuelType.slice(1).toLowerCase()} · ${vehicleNumber || 'Walk-in'}`,
-      summary: `${data.paymentMode === 'CREDIT' ? 'Credit sale' : 'Cash sale'} · ₹${data.amount.toLocaleString('en-IN')}`,
-      status: needsApproval ? 'Pending' : 'Paid',
+      title: `${data.fuelType.charAt(0)}${data.fuelType.slice(1).toLowerCase()} · ${vehicleNumber}`,
+      summary: `Credit sale · ₹${data.amount.toLocaleString('en-IN')}`,
+      status: 'Pending',
     },
   });
 
-  return NextResponse.json({ entry: { id: entry.id, status: needsApproval ? 'Pending' : 'Approved' } }, { status: 201 });
+  return NextResponse.json({ entry: { id: entry.id, status: 'Pending' } }, { status: 201 });
 }

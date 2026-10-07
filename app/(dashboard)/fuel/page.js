@@ -3,7 +3,7 @@ import { listFuelEntries } from '@/lib/queries/fuel-entries';
 import { can } from '@/lib/rbac';
 import { PageHeading, Panel, Tag } from '@/components/ui';
 import NewFuelEntryButton from '@/components/NewFuelEntryButton';
-import { formatCurrency, formatVolume } from '@/lib/format';
+import { formatCurrency, formatVolume, formatDateTime } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,9 +26,11 @@ export default async function FuelPage() {
           <table>
             <thead>
               <tr>
+                <th>Date &amp; time</th>
                 <th>Fuel</th>
                 <th>Qty</th>
-                <th>Vehicle / Customer</th>
+                <th>Vehicle</th>
+                <th>Customer</th>
                 <th>Amount</th>
                 <th>Payment</th>
                 <th>Status</th>
@@ -38,9 +40,11 @@ export default async function FuelPage() {
             <tbody>
               {entries.map(entry => (
                 <tr key={entry.id}>
+                  <td>{formatDateTime(entry.createdAt)}</td>
                   <td>{entry.fuelType.charAt(0) + entry.fuelType.slice(1).toLowerCase()}</td>
                   <td>{formatVolume(entry.quantityL)}</td>
-                  <td>{entry.vehicleNumber || entry.customerName || '—'}</td>
+                  <td>{entry.vehicleNumber || '—'}</td>
+                  <td>{entry.customerName || '—'}</td>
                   <td>{formatCurrency(entry.amount)}</td>
                   <td>{entry.paymentMode}</td>
                   <td>

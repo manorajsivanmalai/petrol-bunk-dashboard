@@ -1,5 +1,5 @@
 import { getReportsSummary } from '@/lib/queries/reports';
-import { PageHeading, Kpi, EmptyState } from '@/components/ui';
+import { PageHeading, Kpi, EmptyState, Panel } from '@/components/ui';
 import { formatCurrency, formatVolume } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
@@ -21,6 +21,15 @@ export default async function ReportsPage() {
           Export monthly report <span>↗</span>
         </a>
       </EmptyState>
+      <Panel title="Tally accounting export" aside="XML">
+        <p className="panel-subtext">
+          Download every customer, credit sale, and payment as Tally-compatible XML. In Tally Prime: Gateway of Tally →
+          Import Data → select this file to bring in ledgers and vouchers.
+        </p>
+        <a className="secondary" href="/api/tally/export">
+          Export for Tally <span>↗</span>
+        </a>
+      </Panel>
     </>
   );
 }

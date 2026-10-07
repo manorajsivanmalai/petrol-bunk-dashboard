@@ -6,14 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import { useToast } from './ToastProvider';
 import { fetcher } from '@/lib/fetcher';
-
-function Brand() {
-  return (
-    <div className="brand-mark">
-      <span>iocl</span>
-    </div>
-  );
-}
+import Brand from './Brand';
 
 function NotificationBell() {
   const notify = useToast();

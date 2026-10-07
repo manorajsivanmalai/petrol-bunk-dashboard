@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { postJSON } from '@/lib/fetcher';
+import Brand from './Brand';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function LoginForm() {
     <section className="login">
       <div className="login-visual">
         <div className="brand-lockup">
-          <div className="brand-mark"><span>iocl</span></div>
+          <Brand />
           <div>
             <strong>KANNUSAMY</strong>
             <small>AGENCY / KALLAKURICHI</small>
@@ -49,7 +50,7 @@ export default function LoginForm() {
       </div>
       <div className="login-panel">
         <div className="mobile-brand">
-          <div className="brand-mark"><span>iocl</span></div>
+          <Brand />
           <strong>KANNUSAMY AGENCY</strong>
         </div>
         <div className="login-heading">

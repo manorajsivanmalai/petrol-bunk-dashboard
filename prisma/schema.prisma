@@ -101,8 +101,19 @@ model Customer {
   status            String   @default("Active")
   createdAt         DateTime @default(now())
 
+  vehicles           Vehicle[]
   fuelEntries        FuelEntry[]
   creditTransactions CreditTransaction[]
+}
+
+model Vehicle {
+  id            String   @id @default(cuid())
+  vehicleNumber String   @unique
+  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId    String
+  createdAt     DateTime @default(now())
+
+  @@index([customerId])
 }
 
 model FuelEntry {
@@ -121,6 +132,7 @@ model FuelEntry {
   createdById   String
   createdAt     DateTime    @default(now())
   status        String      @default("Recorded")
+  tallySyncedAt DateTime?
 
   creditTransactions CreditTransaction[]
   approvals          Approval[]
@@ -134,10 +146,11 @@ model CreditTransaction {
   customerId  String
   fuelEntry   FuelEntry?            @relation(fields: [fuelEntryId], references: [id])
   fuelEntryId String?
-  amount      Decimal
-  type        CreditTransactionType
-  note        String?
-  createdAt   DateTime              @default(now())
+  amount        Decimal
+  type          CreditTransactionType
+  note          String?
+  createdAt     DateTime              @default(now())
+  tallySyncedAt DateTime?
 }
 
 model Approval {

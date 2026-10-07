@@ -3,7 +3,7 @@ import { listApprovals } from '@/lib/queries/approvals';
 import { can } from '@/lib/rbac';
 import { PageHeading, Panel, Tag } from '@/components/ui';
 import ApprovalActions from '@/components/ApprovalActions';
-import { formatCurrency } from '@/lib/format';
+import { formatCurrency, formatDateTime } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +26,7 @@ export default async function ApprovalsPage() {
           <table>
             <thead>
               <tr>
+                <th>Date &amp; time</th>
                 <th>Request</th>
                 <th>Details</th>
                 <th>Amount</th>
@@ -36,6 +37,7 @@ export default async function ApprovalsPage() {
             <tbody>
               {approvals.map(item => (
                 <tr key={item.id}>
+                  <td>{formatDateTime(item.createdAt)}</td>
                   <td><strong>{item.title}</strong></td>
                   <td>{item.detail}</td>
                   <td>{formatCurrency(item.amount)}</td>

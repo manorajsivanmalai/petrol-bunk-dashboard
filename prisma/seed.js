@@ -59,11 +59,34 @@ async function main() {
   const pump1 = await prisma.pump.upsert({ where: { name: 'Pump 01' }, update: {}, create: { name: 'Pump 01' } });
   const pump3 = await prisma.pump.upsert({ where: { name: 'Pump 03' }, update: {}, create: { name: 'Pump 03' } });
 
+  const alreadySeeded = await prisma.customer.findFirst({ where: { name: 'ABC Transport' } });
+  if (alreadySeeded) {
+    console.log('Demo customers/shifts/fuel entries already exist — skipping (only accounts above were refreshed).');
+    console.log('Seed complete. Demo accounts (log in with username or email, all use password "Agency@123"):');
+    console.log('  admin (admin@kannusamyagency.com)');
+    console.log('  manager (manager@kannusamyagency.com)');
+    console.log('  attendant (attendant@kannusamyagency.com)');
+    console.log('  accountant (accountant@kannusamyagency.com)');
+    return;
+  }
+
   const customerA = await prisma.customer.create({
-    data: { name: 'ABC Transport', contactPhone: '9443218012', creditLimit: 100000, outstandingAmount: 36700 },
+    data: {
+      name: 'ABC Transport',
+      contactPhone: '9443218012',
+      creditLimit: 100000,
+      outstandingAmount: 36700,
+      vehicles: { create: [{ vehicleNumber: 'TN15 AB 4582' }, { vehicleNumber: 'TN15 AB 9091' }] },
+    },
   });
   const customerB = await prisma.customer.create({
-    data: { name: 'Selvam Earth Movers', contactPhone: '9842177102', creditLimit: 75000, outstandingAmount: 18400 },
+    data: {
+      name: 'Selvam Earth Movers',
+      contactPhone: '9842177102',
+      creditLimit: 75000,
+      outstandingAmount: 18400,
+      vehicles: { create: [{ vehicleNumber: 'TN28 CD 7711' }] },
+    },
   });
 
   const morningShift = await prisma.shift.create({

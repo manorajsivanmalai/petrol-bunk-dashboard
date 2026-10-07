@@ -20,7 +20,7 @@ export default function AuditTable({ entries }) {
     <>
       <div className="field-row">
         <input
-          className="audit-search"
+          className="table-search"
           value={query}
           onChange={event => setQuery(event.target.value)}
           placeholder="Search by person, action, or detail…"

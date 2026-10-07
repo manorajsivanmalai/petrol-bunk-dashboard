@@ -9,7 +9,10 @@ export async function GET(request, { params }) {
   const { id } = await params;
   const customer = await prisma.customer.findUnique({
     where: { id },
-    include: { creditTransactions: { orderBy: { createdAt: 'desc' }, take: 50 } },
+    include: {
+      creditTransactions: { orderBy: { createdAt: 'desc' }, take: 50 },
+      vehicles: { orderBy: { createdAt: 'asc' } },
+    },
   });
   if (!customer) return NextResponse.json({ error: 'Customer not found.' }, { status: 404 });
 
@@ -18,6 +21,7 @@ export async function GET(request, { params }) {
       id: customer.id,
       name: customer.name,
       contactPhone: customer.contactPhone,
+      vehicles: customer.vehicles.map(vehicle => ({ id: vehicle.id, vehicleNumber: vehicle.vehicleNumber })),
       creditLimit: Number(customer.creditLimit),
       outstandingAmount: Number(customer.outstandingAmount),
       status: customer.status,

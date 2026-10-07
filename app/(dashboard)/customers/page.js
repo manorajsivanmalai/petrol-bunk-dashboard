@@ -3,7 +3,7 @@ import { listCustomers } from '@/lib/queries/customers';
 import { can } from '@/lib/rbac';
 import { PageHeading, Kpi, Panel } from '@/components/ui';
 import AddCustomerButton from '@/components/AddCustomerButton';
-import CustomerRow from '@/components/CustomerRow';
+import CustomerTable from '@/components/CustomerTable';
 import { formatCurrency } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
@@ -26,22 +26,7 @@ export default async function CustomersPage() {
         {customers.length === 0 ? (
           <p className="table-empty">No customers yet.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Account</th>
-                <th>Contact</th>
-                <th>Credit limit</th>
-                <th>Outstanding</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.map(customer => (
-                <CustomerRow key={customer.id} customer={customer} />
-              ))}
-            </tbody>
-          </table>
+          <CustomerTable customers={customers} />
         )}
       </Panel>
     </>
